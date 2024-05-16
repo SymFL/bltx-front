@@ -29,7 +29,13 @@ let router = createRouter({
                     // :id 为动态路由
                     path: 'users/:id',
                     component : () => import('../view/UsersDetailView.vue')
-                }
+                },
+
+                {
+                    // 子路由中的路径不需要以 "/" 开头
+                    path: 'pictures',
+                    component : () => import('../view/PicturesView.vue')
+                },
             ]
         }
     ]
