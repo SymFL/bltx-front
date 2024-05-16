@@ -2,165 +2,17 @@
 <template>
     <el-container>
         <el-aside :width="isCollapse ? '64px' : '200px'">
-            <div class="menuTitle">@云上商务管理系统</div>
+            <div class="menuTitle">@病理图像分类</div>
             <!-- 左侧菜单 -->
             <el-menu active-text-color="#ffd04b" background-color="#333333" class="el-menu-vertical-demo" default-active="2"
                 text-color="#fff" style="border-right: solid 0px" :unique-opened="true" :collapse-transition="false"
                 :collapse="isCollapse" :router="true">
-                <el-sub-menu index="1">
-                    <template #title>
-                        <el-icon>
-                            <OfficeBuilding />
-                        </el-icon>
-                        <span>市场活动</span>
-                    </template>
-                    <el-menu-item index="1-1">
-                        <el-icon>
-                            <location />
-                        </el-icon>
-                        item one
-                    </el-menu-item>
-                    <el-menu-item index="1-2">
-                        <el-icon>
-                            <location />
-                        </el-icon>
-                        item two
-                    </el-menu-item>
-                </el-sub-menu>
-                <el-sub-menu index="2">
-                    <template #title>
-                        <el-icon>
-                            <Magnet />
-                        </el-icon>
-                        <span>线索管理</span>
-                    </template>
-                    <el-menu-item index="2-1">
-                        <el-icon>
-                            <location />
-                        </el-icon>
-                        item one
-                    </el-menu-item>
-                    <el-menu-item index="2-2">
-                        <el-icon>
-                            <location />
-                        </el-icon>
-                        item two
-                    </el-menu-item>
-                </el-sub-menu>
-                <el-sub-menu index="3">
-                    <template #title>
-                        <el-icon>
-                            <User />
-                        </el-icon>
-                        <span>客户管理</span>
-                    </template>
-                    <el-menu-item index="3-1">
-                        <el-icon>
-                            <location />
-                        </el-icon>
-                        item one
-                    </el-menu-item>
-                    <el-menu-item index="3-2">
-                        <el-icon>
-                            <location />
-                        </el-icon>
-                        item two
-                    </el-menu-item>
-                </el-sub-menu>
-                <el-sub-menu index="4">
-                    <template #title>
-                        <el-icon>
-                            <Wallet />
-                        </el-icon>
-                        <span>交易管理</span>
-                    </template>
-                    <el-menu-item index="4-1">
-                        <el-icon>
-                            <location />
-                        </el-icon>
-                        item one
-                    </el-menu-item>
-                    <el-menu-item index="4-2">
-                        <el-icon>
-                            <location />
-                        </el-icon>
-                        item two
-                    </el-menu-item>
-                </el-sub-menu>
-                <el-sub-menu index="5">
-                    <template #title>
-                        <el-icon>
-                            <Memo />
-                        </el-icon>
-                        <span>产品管理</span>
-                    </template>
-                    <el-menu-item index="5-1">
-                        <el-icon>
-                            <location />
-                        </el-icon>
-                        item one
-                    </el-menu-item>
-                    <el-menu-item index="5-2">
-                        <el-icon>
-                            <location />
-                        </el-icon>
-                        item two
-                    </el-menu-item>
-                </el-sub-menu>
-                <el-sub-menu index="6">
-                    <template #title>
-                        <el-icon>
-                            <Grid />
-                        </el-icon>
-                        <span>字典管理</span>
-                    </template>
-                    <el-menu-item index="6-1">
-                        <el-icon>
-                            <location />
-                        </el-icon>
-                        item one
-                    </el-menu-item>
-                    <el-menu-item index="6-2">
-                        <el-icon>
-                            <location />
-                        </el-icon>
-                        item two
-                    </el-menu-item>
-                </el-sub-menu>
-                <el-sub-menu index="7">
-                    <template #title>
-                        <el-icon>
-                            <UserFilled />
-                        </el-icon>
-                        <span>用户管理</span>
-                    </template>
-                    <el-menu-item index="/dashboard/users">
-                        <el-icon>
-                            <location />
-                        </el-icon>
-                        用户管理
-                    </el-menu-item>
-                </el-sub-menu>
-                <el-sub-menu index="8">
-                    <template #title>
-                        <el-icon>
-                            <Setting />
-                        </el-icon>
-                        <span>系统管理</span>
-                    </template>
-                    <el-menu-item index="8-1">
-                        <el-icon>
-                            <location />
-                        </el-icon>
-                        item one
-                    </el-menu-item>
-                    <el-menu-item index="8-2">
-                        <el-icon>
-                            <location />
-                        </el-icon>
-                        item two
-                    </el-menu-item>
-                </el-sub-menu>
+                <el-menu-item index="/dashboard/users">
+                  <el-icon>
+                      <UserFilled />
+                  </el-icon>
+                  <span>用户管理</span>
+                </el-menu-item>
             </el-menu>
         </el-aside>
         <el-container class="rightContext">

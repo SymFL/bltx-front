@@ -25,18 +25,6 @@
                 <div class="detail">&nbsp;{{ userDetail.email }}</div>
             </el-form-item>
             
-            <el-form-item label="账号是否过期：">
-                <div class="detail">&nbsp;{{ userDetail.accountNoExpired === 1 ? "否" : "是" }}</div>
-            </el-form-item>
-            
-            <el-form-item label="密码是否过期：">
-                <div class="detail">&nbsp;{{ userDetail.credentialsNoExpired === 1 ? "否" : "是" }}</div>
-            </el-form-item>
-            
-            <el-form-item label="账号是否被锁定：">
-                <div class="detail">&nbsp;{{ userDetail.accountNoLocked === 1 ? "否" : "是" }}</div>
-            </el-form-item>
-            
             <el-form-item label="账号是否被启用：">
                 <div class="detail">&nbsp;{{ userDetail.accountEnabled === 1 ? "否" : "是" }}</div>
             </el-form-item>

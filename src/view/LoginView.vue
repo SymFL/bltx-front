@@ -4,7 +4,7 @@
         <el-aside width="200px">
             <img src="../assets/LoginView_el-aside.jpeg" />
             <p class="imgTitle">
-                欢迎使用云上商务管理系统
+                欢迎使用病理图像分类系统
             </p>
         </el-aside>
         <el-main>
