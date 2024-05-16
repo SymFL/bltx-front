@@ -133,7 +133,6 @@ export default {
       array.forEach(data =>{
         this.ids.push(data.id)
       })
-      alert(this.ids);
     },
     //批量删除
     arrayDel(){
