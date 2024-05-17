@@ -36,6 +36,12 @@ let router = createRouter({
                     path: 'pictures',
                     component : () => import('../view/PicturesView.vue')
                 },
+
+                {
+                    // 子路由中的路径不需要以 "/" 开头
+                    path: 'userPic',
+                    component : () => import('../view/UserPicView.vue')
+                },
             ]
         }
     ]

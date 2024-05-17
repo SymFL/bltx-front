@@ -4,7 +4,7 @@ import { getTokenName, messageConfirm,messageTip,removeToken } from "../util/uti
 
 
 //定义后端接口地址的前缀
-axios.defaults.baseURL = "http://localhost:8089";
+axios.defaults.baseURL = "http://localhost:10086";
 
 export function doGet(url, params) {
     return axios({

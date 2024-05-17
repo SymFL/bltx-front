@@ -19,6 +19,12 @@
           </el-icon>
           <span>图片管理</span>
         </el-menu-item>
+        <el-menu-item index="/dashboard/userPic">
+          <el-icon>
+            <Picture/>
+          </el-icon>
+          <span>分类预测</span>
+        </el-menu-item>
       </el-menu>
     </el-aside>
     <el-container class="rightContext">
