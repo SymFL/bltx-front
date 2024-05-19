@@ -1,6 +1,24 @@
 <template>
-  <el-button type="primary"  @click="dialogVisible = true">上传图片</el-button>
-  <el-button type="danger"  @click="batchDel()">批量删除</el-button>
+  <el-row :gutter="10">
+    <el-col :span="4">
+      <el-input placeholder="图片名"
+                v-model="name" clearable @clear="clear()">
+        <template #append>
+          <el-button @click="getPicList()">
+            <el-icon>
+              <search/>
+            </el-icon>
+          </el-button>
+        </template>
+      </el-input>
+    </el-col>
+    <el-col :span="2">
+      <el-button type="primary" @click="dialogVisible = true">上传图片</el-button>
+    </el-col>
+    <el-col :span="1">
+      <el-button type="danger" @click="batchDel()">批量删除</el-button>
+    </el-col>
+  </el-row>
 
   <!-- 图片列表 -->
   <el-table :data="picList" style="width: 100%" @selection-change="handleSelectionChange">
@@ -12,9 +30,8 @@
     <el-table-column property="remark" label="备注" width="500" show-overflow-tooltip/>
     <el-table-column label="操作" show-overflow-tooltip>
       <template #default="scope">
-        <el-button type="primary" @click="download(scope.row.id)">下载</el-button>
-        <el-button type="success" @click="edit(scope.row.id)">预览</el-button>
-        <el-button type="success" @click="predict(scope.row.id)">预测</el-button>
+        <el-button type="success" @click="check(scope.row.id)">查看</el-button>
+        <el-button type="info" @click="predict(scope.row.id)">预测</el-button>
         <el-button type="danger" @click="del(scope.row.id)">删除</el-button>
       </template>
     </el-table-column>
@@ -27,29 +44,57 @@
   <!-- 上传图片弹窗 -->
   <el-dialog v-model="dialogVisible" title="图片上传" width="750" center
              :before-close="handleClose" destroy-on-close>
-
-    <el-form ref="userRefForm" :model="picQuery" label-width="140px" :rules="picRules">
+    <el-form ref="picRefForm" :model="picQuery" label-width="140px" :rules="picRules">
       <el-form-item label="图片名：" prop="name">
         <el-input v-model="picQuery.name" style="width: 500px"/>
       </el-form-item>
-      <el-form-item label="手机：" prop="phone">
-        <el-input v-model="userQuery.phone" style="width: 500px"/>
+
+      <el-form-item label="图片：" prop="pic">
+        <el-upload
+            class="avatar-uploader"
+            action="#"
+            :show-file-list="false"
+            :before-upload="beforeAvatarUpload">
+          <img v-if="picturePath" :src="picturePath" class="avatar"/>
+          <el-icon v-else class="avatar-uploader-icon">
+            <Plus/>
+          </el-icon>
+        </el-upload>
       </el-form-item>
-      <el-form-item label="邮箱：" prop="email">
-        <el-input v-model="userQuery.email" style="width: 500px"/>
-      </el-form-item>
-      <el-form-item label="账号是否被启用：" prop="accountEnabled">
-        <el-select v-model="userQuery.accountEnabled" style="width: 240px">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"/>
-        </el-select>
+
+      <el-form-item label="备注：" prop="remark">
+        <el-input
+            v-model="picQuery.remark"
+            maxlength="300"
+            style="width: 500px"
+            show-word-limit
+            type="textarea"
+            rows="10"
+        />
       </el-form-item>
     </el-form>
 
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
-        <el-button type="primary" @click="addUser">
+        <el-button type="primary" @click="upload()">
           提 交
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
+
+  <!-- 预览图片弹窗 -->
+  <el-dialog v-model="picVisible" :title="this.picQuery.name + '.tif'" width="750" center
+             :before-close="handlePicClose" destroy-on-close>
+    <img v-if="picturePath" :src="picturePath" class="avatar"/>
+    <el-button v-else type="primary" @click="upload()">
+      下 载
+    </el-button>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button type="primary" @click="upload()">
+          下 载
         </el-button>
       </div>
     </template>
@@ -59,32 +104,125 @@
 <script>
 import {doDelete, doGet, doPost, doPut} from "../http/httpRequest"
 import {messageConfirm, messageTip} from "../util/utils"
+import {TiffV} from '../util/tiff.min.js'
 
-
+TiffV()
 export default {
   name: 'PicturesView',
   inject: ['reload'],
   data() {
     return {
+      picVisible: false,
       picList: [{}],
       total: 0,
       pageSize: 0,
-      picQuery:{},
+      current: 1,
+      name: "",
+      picQuery: {},
       dialogVisible: false,
-      ids:[],
-      userRules: {
+      ids: [],
+      picRules: {
         name: [
           {required: true, message: '请输入图片名！', trigger: 'blur'},
-          {pattern: /^(?!_)(?!.*?_$)[a-zA-Z0-9_\u4e00-\u9fa5]+$/, message: '图片名只能包含中文、英文字母、数字、下划线，且下划线不能出现在开头与结尾', trigger: 'blur'}
-          { min: 1, max: 20, message: '图片名长度在1到20之间', trigger: 'blur' }
+          {
+            pattern: /^(?!_)(?!.*?_$)[a-zA-Z0-9_\u4e00-\u9fa5]+$/,
+            message: '图片名只能包含中文、英文字母、数字、下划线，且下划线不能出现在开头与结尾',
+            trigger: 'blur'
+          },
+          {min: 1, max: 20, message: '图片名长度在1到20之间', trigger: 'blur'}
         ],
-    }
+        remark: [
+          {min: 0, max: 300, message: '备注最多为300字', trigger: 'blur'}
+        ],
+        pic: [
+          {required: true, message: '请选择图片！', trigger: 'blur'},
+        ]
+      },
+      picturePath: "",
+      pictureFile: ""
     }
   },
   mounted() {
-    this.getPicList(1);
+    this.getPicList();
   },
   methods: {
+    //下载图片
+    check(id) {
+      doGet("/api/userPics/info/" + id)
+          .then(resp => {
+            if (resp.data.code === 200) {
+              this.picQuery = resp.data.data;
+              let base64String = this.picQuery.encodedString;
+              let tiff = new Tiff({buffer: this._base64ToArrayBuffer(base64String)});
+              let canvas = tiff.toCanvas();
+              this.picturePath = canvas.toDataURL();
+              this.picVisible = true;
+            } else {
+              messageTip(resp.data.msg, "error")
+            }
+          });
+    },
+    //将Base64编码的字符串转换为ArrayBuffer
+    _base64ToArrayBuffer(base64) {
+      var binary_string = window.atob(base64);
+      var len = binary_string.length;
+      var bytes = new Uint8Array(len);
+      for (var i = 0; i < len; i++) {
+        bytes[i] = binary_string.charCodeAt(i);
+      }
+      return bytes.buffer;
+    },
+    //上传图片
+    upload() {
+      this.$refs.picRefForm.validate((isValid) => {
+        if (isValid) {
+          let formData = new FormData();
+          formData.append('name', this.picQuery.name);
+          formData.append('remark', this.picQuery.remark);
+          formData.append('picture', this.pictureFile);
+          // 添加
+          doPost('/api/userPics/upload',
+              formData
+          ).then(resp => {
+            if (resp.data.code === 200) {
+              messageTip("上传成功！", "success");
+              this.reload();
+            } else {
+              messageTip(resp.data.msg, "error")
+            }
+          })
+        }
+      })
+    },
+    //添加图片并预览
+    beforeAvatarUpload(rawFile) {
+      if (rawFile.type !== 'image/tif' && rawFile.type !== 'image/tiff') {
+        messageTip('文件类型有误,请上传tif或tiff格式的图片', "error");
+        return false;
+      } else {
+        this.pictureFile = rawFile;
+        this.picQuery.pic = rawFile.name;
+        // 创建一个新的 Promise
+        let promise = new Promise((resolve, reject) => {
+          let fr = new FileReader();
+          fr.readAsArrayBuffer(rawFile);
+          fr.onload = (e) => {
+            let tiff = new Tiff({buffer: e.target.result});
+            let canvas = tiff.toCanvas();
+            this.picturePath = canvas.toDataURL();
+            // 在文件读取完成后解析 Promise
+            resolve();
+          };
+        });
+        // 在 Promise 解析后返回 false
+        return promise.then(() => false);
+      }
+    },
+    //清空搜索框
+    clear() {
+      this.name = "";
+      this.getPicList();
+    },
     //多选时传回要删除的ids
     handleSelectionChange(array) {
       this.ids = [];
@@ -131,30 +269,46 @@ export default {
     },
 
     // 获取图片列表
-    getPicList(current) {
-      doGet("/api/pics", {current: current}).then((resp) => {
+    getPicList() {
+      doPost("/api/userPics",
+          {
+            current: this.current,
+            name: this.name
+          }).then((resp) => {
         if (resp.data.code === 200) {
           this.picList = resp.data.data.list;
           this.total = resp.data.data.total;
           this.pageSize = resp.data.data.pageSize;
-
         }
       })
     },
 
     // 分页条函数,element-plus 框架会自动传来参数
     toPage(current) {
-      this.getUserList(current)
+      this.current = current;
+      this.getPicList();
     },
 
     // 关闭弹窗并清空已填写的图片信息
     handleClose() {
       messageConfirm("已填入的数据不会被保存，是否关闭？")
           .then(() => {
-            this.picQuery = {};
             this.dialogVisible = false;
+            this.picQuery = {};
+            this.picturePath = "";
+            this.pictureFile = "";
           }).catch(() => {
       })
+    },
+
+    // 关闭预览弹窗并清空已填写的图片信息
+    handlePicClose() {
+      this.picVisible = false;
+      this.picQuery = {};
+      URL.revokeObjectURL(this.picturePath);
+      URL.revokeObjectURL(this.pictureFile);
+      this.picturePath = "";
+      this.pictureFile = "";
     },
   }
 }
@@ -167,5 +321,27 @@ export default {
 
 .el-pagination {
   margin-top: 12px;
+}
+
+
+.avatar-uploader .el-upload {
+  border: 1px dashed var(--el-border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: var(--el-transition-duration-fast);
+}
+
+.avatar-uploader .el-upload:hover {
+  border-color: var(--el-color-primary);
+}
+
+.el-icon.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  text-align: center;
 }
 </style>
