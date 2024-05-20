@@ -1,6 +1,24 @@
 <template>
-  <el-button type="primary" @click="dialogVisible = true">添加用户</el-button>
-  <el-button type="danger"  @click="arrayDel()">批量删除</el-button>
+  <el-row>
+    <el-col :span="4">
+      <el-input placeholder="姓名"
+                v-model="name" clearable @clear="clear()">
+        <template #append>
+          <el-button @click="search()">
+            <el-icon>
+              <search/>
+            </el-icon>
+          </el-button>
+        </template>
+      </el-input>
+    </el-col>
+    <el-col :span="2" style="display: flex;justify-content: center;align-items: center;">
+      <el-button type="primary" @click="dialogVisible = true">添加用户</el-button>
+    </el-col>
+    <el-col :span="1">
+      <el-button type="danger"  @click="arrayDel()">批量删除</el-button>
+    </el-col>
+  </el-row>
 
   <!-- 用户列表 -->
   <el-table :data="userList" style="width: 100%" @selection-change="handleSelectionChange">
@@ -81,6 +99,7 @@ export default {
       userQuery: {},
       dialogVisible: false,
       ids:[],
+      name:"",
       userRules: {
         loginAct: [
           {required: true, message: '请输入账号！', trigger: 'blur'},
@@ -127,6 +146,13 @@ export default {
     this.getUserList(1);
   },
   methods: {
+    search(){
+      this.getUserList()
+    },
+    clear(){
+      this.name = "";
+      this.getUserList()
+    },
     //多选时传回要删除的ids
     handleSelectionChange(array){
       this.ids = [];
@@ -174,7 +200,10 @@ export default {
 
     // 获取用户列表
     getUserList(current) {
-      doGet("/api/users", {current: current}).then((resp) => {
+      doGet("/api/users", {
+        current: current,
+        name:this.name
+      }).then((resp) => {
         if (resp.data.code === 200) {
           this.userList = resp.data.data.list;
           this.total = resp.data.data.total;

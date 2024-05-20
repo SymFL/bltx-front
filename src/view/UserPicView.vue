@@ -1,10 +1,10 @@
 <template>
-  <el-row :gutter="10">
+  <el-row>
     <el-col :span="4">
       <el-input placeholder="图片名"
                 v-model="name" clearable @clear="clear()">
         <template #append>
-          <el-button @click="getPicList()">
+          <el-button @click="search()">
             <el-icon>
               <search/>
             </el-icon>
@@ -12,7 +12,7 @@
         </template>
       </el-input>
     </el-col>
-    <el-col :span="2">
+    <el-col :span="2" style="display: flex;justify-content: center;align-items: center;">
       <el-button type="primary" @click="dialogVisible = true">上传图片</el-button>
     </el-col>
     <el-col :span="1">
@@ -85,15 +85,12 @@
   </el-dialog>
 
   <!-- 预览图片弹窗 -->
-  <el-dialog v-model="picVisible" :title="this.picQuery.name + '.tif'" width="750" center
+  <el-dialog v-model="picVisible" :title="this.picQuery.name + '.tif'" width="600" center
              :before-close="handlePicClose" destroy-on-close>
-    <img v-if="picturePath" :src="picturePath" class="avatar"/>
-    <el-button v-else type="primary" @click="upload()">
-      下 载
-    </el-button>
+    <img :src="picturePath" style="display: block;margin-left: auto;margin-right: auto;"/>
     <template #footer>
       <div class="dialog-footer">
-        <el-button type="primary" @click="upload()">
+        <el-button type="primary" @click="download()">
           下 载
         </el-button>
       </div>
@@ -103,7 +100,7 @@
 
 <script>
 import {doDelete, doGet, doPost, doPut} from "../http/httpRequest"
-import {messageConfirm, messageTip} from "../util/utils"
+import {messageConfirm, messageTip,downloadBase64File,_base64ToArrayBuffer} from "../util/utils"
 import {TiffV} from '../util/tiff.min.js'
 
 TiffV()
@@ -146,14 +143,22 @@ export default {
     this.getPicList();
   },
   methods: {
+    //搜索
+    search(){
+      this.getPicList();
+    },
     //下载图片
+    download() {
+      downloadBase64File(this.picQuery.encodedString, this.picQuery.name + ".tif");
+    },
+    //查看图片
     check(id) {
       doGet("/api/userPics/info/" + id)
           .then(resp => {
             if (resp.data.code === 200) {
               this.picQuery = resp.data.data;
               let base64String = this.picQuery.encodedString;
-              let tiff = new Tiff({buffer: this._base64ToArrayBuffer(base64String)});
+              let tiff = new Tiff({buffer: _base64ToArrayBuffer(base64String)});
               let canvas = tiff.toCanvas();
               this.picturePath = canvas.toDataURL();
               this.picVisible = true;
@@ -161,16 +166,6 @@ export default {
               messageTip(resp.data.msg, "error")
             }
           });
-    },
-    //将Base64编码的字符串转换为ArrayBuffer
-    _base64ToArrayBuffer(base64) {
-      var binary_string = window.atob(base64);
-      var len = binary_string.length;
-      var bytes = new Uint8Array(len);
-      for (var i = 0; i < len; i++) {
-        bytes[i] = binary_string.charCodeAt(i);
-      }
-      return bytes.buffer;
     },
     //上传图片
     upload() {
@@ -221,7 +216,7 @@ export default {
     //清空搜索框
     clear() {
       this.name = "";
-      this.getPicList();
+      this.search();
     },
     //多选时传回要删除的ids
     handleSelectionChange(array) {
@@ -305,8 +300,6 @@ export default {
     handlePicClose() {
       this.picVisible = false;
       this.picQuery = {};
-      URL.revokeObjectURL(this.picturePath);
-      URL.revokeObjectURL(this.pictureFile);
       this.picturePath = "";
       this.pictureFile = "";
     },
