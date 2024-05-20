@@ -23,13 +23,13 @@
   <!-- 用户列表 -->
   <el-table :data="userList" style="width: 100%" @selection-change="handleSelectionChange">
     <el-table-column type="selection" width="55"/>
-    <el-table-column type=index label="序号" width="60"/>
-    <el-table-column property="loginAct" label="账号" width="200"/>
-    <el-table-column property="name" label="姓名" width="150"/>
-    <el-table-column property="phone" label="手机" width="200" show-overflow-tooltip/>
-    <el-table-column property="email" label="邮箱" width="300" show-overflow-tooltip/>
-    <el-table-column property="createTime" label="创建时间" width="300" show-overflow-tooltip/>
-    <el-table-column label="操作" show-overflow-tooltip>
+    <el-table-column type=index label="序号" width="60" align="center"/>
+    <el-table-column property="loginAct" label="账号" width="200" align="center"/>
+    <el-table-column property="name" label="姓名" width="150" align="center"/>
+    <el-table-column property="phone" label="手机" width="200" show-overflow-tooltip align="center"/>
+    <el-table-column property="email" label="邮箱" width="300" show-overflow-tooltip align="center"/>
+    <el-table-column property="createTime" label="创建时间" width="300" show-overflow-tooltip align="center"/>
+    <el-table-column label="操作" show-overflow-tooltip align="center">
       <template #default="scope">
         <el-button type="primary" @click="view(scope.row.id)">详情</el-button>
         <el-button type="success" @click="edit(scope.row.id)">编辑</el-button>

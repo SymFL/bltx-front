@@ -20,13 +20,13 @@
   <!-- 图片列表 -->
   <el-table :data="picList" style="width: 100%" @selection-change="handleSelectionChange">
     <el-table-column type="selection" width="55"/>
-    <el-table-column type=index label="序号" width="60"/>
-    <el-table-column property="name" label="图片名" width="300"/>
-    <el-table-column property="result" label="预测结果" width="150"/>
-    <el-table-column property="probability" label="预测可能性" width="150" show-overflow-tooltip/>
-    <el-table-column property="userName" label="上传者" width="150"/>
-    <el-table-column property="remark" label="备注" width="500" show-overflow-tooltip/>
-    <el-table-column label="操作" show-overflow-tooltip>
+    <el-table-column type=index label="序号" width="60" align="center"/>
+    <el-table-column property="name" label="图片名" width="300" align="center"/>
+    <el-table-column property="result" label="预测结果" width="150" align="center"/>
+    <el-table-column property="probability" label="预测可能性（%）" width="150" show-overflow-tooltip align="center"/>
+    <el-table-column property="userName" label="上传者" width="150" align="center"/>
+    <el-table-column property="remark" label="备注" width="500" show-overflow-tooltip align="center"/>
+    <el-table-column label="操作" show-overflow-tooltip align="center">
       <template #default="scope">
         <el-button type="success" @click="check(scope.row.id)">查看</el-button>
         <el-button type="danger" @click="del(scope.row.id)">删除</el-button>

@@ -23,12 +23,12 @@
   <!-- 图片列表 -->
   <el-table :data="picList" style="width: 100%" @selection-change="handleSelectionChange">
     <el-table-column type="selection" width="55"/>
-    <el-table-column type=index label="序号" width="60"/>
-    <el-table-column property="name" label="图片名" width="300"/>
-    <el-table-column property="result" label="预测结果" width="150"/>
-    <el-table-column property="probability" label="预测可能性" width="150" show-overflow-tooltip/>
-    <el-table-column property="remark" label="备注" width="500" show-overflow-tooltip/>
-    <el-table-column label="操作" show-overflow-tooltip>
+    <el-table-column type=index label="序号" width="60" align="center"/>
+    <el-table-column property="name" label="图片名" width="300" align="center"/>
+    <el-table-column property="result" label="预测结果" width="150" align="center"/>
+    <el-table-column property="probability" label="预测可能性（%）" width="150" show-overflow-tooltip align="center"/>
+    <el-table-column property="remark" label="备注" width="500" show-overflow-tooltip align="center"/>
+    <el-table-column label="操作" show-overflow-tooltip align="center">
       <template #default="scope">
         <el-button type="success" @click="check(scope.row.id)">查看</el-button>
         <el-button type="info" @click="predict(scope.row.id)">预测</el-button>
@@ -115,7 +115,10 @@ export default {
       pageSize: 0,
       current: 1,
       name: "",
-      picQuery: {},
+      picQuery: {
+        name:"",
+        remark:""
+      },
       dialogVisible: false,
       ids: [],
       picRules: {
@@ -143,6 +146,18 @@ export default {
     this.getPicList();
   },
   methods: {
+    //预测
+    predict(id){
+      doGet("/api/userPics/predict/" + id)
+          .then(resp => {
+            if (resp.data.code === 200) {
+              messageTip("预测成功！","success");
+              this.getPicList();
+            } else {
+              messageTip(resp.data.msg, "error")
+            }
+          });
+    },
     //搜索
     search(){
       this.getPicList();
@@ -289,7 +304,10 @@ export default {
       messageConfirm("已填入的数据不会被保存，是否关闭？")
           .then(() => {
             this.dialogVisible = false;
-            this.picQuery = {};
+            this.picQuery = {
+                name:"",
+                remark:""
+            };
             this.picturePath = "";
             this.pictureFile = "";
           }).catch(() => {
@@ -299,7 +317,10 @@ export default {
     // 关闭预览弹窗并清空已填写的图片信息
     handlePicClose() {
       this.picVisible = false;
-      this.picQuery = {};
+      this.picQuery = {
+        name:"",
+        remark:""
+      };
       this.picturePath = "";
       this.pictureFile = "";
     },
