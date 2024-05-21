@@ -70,6 +70,11 @@
           <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"/>
         </el-select>
       </el-form-item>
+      <el-form-item label="角色：" prop="role">
+        <el-select v-model="userQuery.role" style="width: 240px">
+          <el-option v-for="item in roles" :key="item.value" :label="item.label" :value="item.value"/>
+        </el-select>
+      </el-form-item>
     </el-form>
 
     <template #footer>
@@ -106,7 +111,7 @@ export default {
         ],
         loginPwd: [
           {required: true, message: '请输入密码！', trigger: 'blur'},
-          {min: 6, max: 16, message: '密码长度为6-16', trigger: 'blur'},
+          {pattern: /^[a-zA-Z]\w{8,18}$/, message: '密码以字母开头 长度在8~18之间 只能包含字母、数字和下划线', trigger: 'blur'}
         ],
         name: [
           {required: true, message: '请输入姓名！', trigger: 'blur'},
@@ -126,6 +131,9 @@ export default {
         ],
         accountEnabled: [
           {required: true, message: '请选择账号是否被启用！', trigger: 'blur'},
+        ],
+        role: [
+          {required: true, message: '请选择账号角色！', trigger: 'blur'},
         ]
       },
       options: [
@@ -137,7 +145,16 @@ export default {
           value: 0,
           label: '否',
         },
-
+      ],
+      roles: [
+        {
+          value: 1,
+          label: '管理员',
+        },
+        {
+          value: 2,
+          label: '普通用户',
+        },
       ]
 
     }

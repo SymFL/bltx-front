@@ -21,6 +21,11 @@ let router = createRouter({
             children : [
                 {
                     // 子路由中的路径不需要以 "/" 开头
+                    path: '',
+                    component : () => import('../view/WelcomeView.vue')
+                },
+                {
+                    // 子路由中的路径不需要以 "/" 开头
                     path: 'users',
                     component : () => import('../view/UsersView.vue')
                 },
