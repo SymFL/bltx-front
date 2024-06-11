@@ -2,7 +2,9 @@
 <template>
   <el-container>
     <el-aside :width="isCollapse ? '64px' : '200px'">
-      <div class="menuTitle">@病理图像分类</div>
+      <div class="menuTitle">
+        <a href="/dashboard">@病理图像分类</a>
+      </div>
 
       <!-- 左侧菜单 -->
       <el-menu active-text-color="#ffd04b" background-color="#333333" class="el-menu-vertical-demo" default-active="2"
